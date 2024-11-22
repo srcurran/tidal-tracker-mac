@@ -2,11 +2,15 @@ const express = require('express');
 const applescript = require('applescript');
 const cors = require('cors');
 const axios = require('axios');
+require('dotenv').config();  // If using dotenv
 
 const app = express();
 const PORT = process.env.PORT || 3001;
-const lastfmApiKey = process.env.lastfmApiKey;
+const lastfmApiKey = process.env.LASTFM_API_KEY;
 app.use(cors());
+console.log('API Key present:', !!lastfmApiKey);
+
+
 
 app.get('/now-playing', async (req, res) => {
     console.log("running script");
@@ -65,6 +69,7 @@ app.get('/now-playing', async (req, res) => {
 async function fetchAlbumArtwork(title, artist) {
     try {
         // Example using last.fm API (you'll need to sign up for an API key)
+        console.log("getting art");
         const response = await axios.get('http://ws.audioscrobbler.com/2.0/', {
             params: {
                 method: 'track.getInfo',
@@ -74,9 +79,8 @@ async function fetchAlbumArtwork(title, artist) {
                 format: 'json'
             }
         });
-
         // Extract artwork URL from response
-//        return response.data.track.album.image[3]['#text'] || '';
+        //        return response.data.track.album.image[3]['#text'] || '';
         const images = response.data.track.album.image;
         const originalUrl = images[images.length - 1]['#text'];
         // Replace size in URL to get larger image
